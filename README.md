@@ -1,8 +1,8 @@
-# Contribution [#]: allow downloading insecure, (Fetch via HTTP if HTTPS is unavailable)
+# Contribution 1: allow downloading insecure, (Fetch via HTTP if HTTPS is unavailable)
 
 Note: Contributing with main developer account nathant27
 
-**Contribution Number:** [1 / 2 / 3]  
+**Contribution Number:** 1
 **Student:** Nathan Tam
 **Issue:** [[GitHub issue link]](https://github.com/kubernetes/minikube/issues/6692#event-26436031703) 
 **Status:** Phase 1 Complete
@@ -11,7 +11,6 @@ Note: Contributing with main developer account nathant27
 
 ## Why I Chose This Issue
 
-[1-2 paragraphs explaining why this issue interests you, how it matches your skills/learning goals, what you hope to learn]
 I chose this issue because I wanted to work more on a more substantial project in golang, being my recent language of choice for backend development in my own time.
 I'm seeking to develo my golang skills in larger codebases and following good maintainable practices, and I hope to contribute to this project in a meaningful way by the time I'm done.
 
