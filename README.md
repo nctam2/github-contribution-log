@@ -20,19 +20,19 @@ I'm seeking to develo my golang skills in larger codebases and following good ma
 
 ### Problem Description
 
-[In your own words, what's broken or missing?]
+When downloading kubectl and other kube tools, fails to download on certain LAN infrastructure configuration. 
 
 ### Expected Behavior
 
-[What should happen?]
+Would ideally like a force option to download insecurely
 
 ### Current Behavior
 
-[What actually happens?]
+Gives an error that it failed to download
 
 ### Affected Components
 
-[Which parts of the codebase are involved?]
+the download module, in pkg/minikube/download/iso.go
 
 ---
 
