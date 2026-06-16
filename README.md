@@ -44,15 +44,57 @@ the download module, in pkg/minikube/download/iso.go
 
 ### Steps to Reproduce
 
-1. [Step 1]
-2. [Step 2]
-3. [Observed result]
+1. make folder repro-issue and file main.go with code:
+```
+package main
+
+import (
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"os"
+
+	"k8s.io/minikube/pkg/minikube/download"
+)
+
+func main() {
+	// httptest.NewTLSServer serves over HTTPS using an in-memory, self-signed
+	// certificate. To the default Go http client this looks identical to a
+	// corporate proxy re-signing traffic with a CA the machine doesn't trust.
+	srv := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// We never get here: the TLS handshake fails first. Present anyway so
+		// that, once the insecure fix lands, the download can actually succeed.
+		fmt.Fprintln(os.Stderr, "server: received request for", r.URL.Path)
+		_, _ = w.Write([]byte("not-a-real-binary"))
+	}))
+	defer srv.Close()
+
+	fmt.Println("Untrusted HTTPS mirror listening at:", srv.URL)
+	fmt.Println("Attempting to download kubectl v1.17.2 through it...")
+
+	// srv.URL is the binaryURL ("--binary-mirror"). download.Binary builds the
+	// real release path + checksum URL under it and fetches via go-getter.
+	_, err := download.Binary("kubectl", "v1.17.2", "linux", "amd64", srv.URL)
+	if err != nil {
+		fmt.Println("\nReproduced the issue. Download failed with:")
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	fmt.Println("\nDownload succeeded -- issue NOT reproduced (insecure path is allowed).")
+}
+```
+
+2. run this script with go run repro-issue
+3. When trying to download from mock TLS server, fails to downlaod because certified signed by unknown entity.
 
 ### Reproduction Evidence
 
-- **Commit showing reproduction:** [Link to commit in your fork]
-- **Screenshots/logs:** [If applicable]
-- **My findings:** [What you discovered during reproduction]
+- **Commit showing reproduction:** Running script above. Not yet commited.
+- **Screenshots/logs:**
+- Logs include "  ... Get "https://127.0.0.1:.../kubectl.sha256": tls: failed to verify certificate:
+  x509: certificate signed by unknown authority"
+- **My findings:** Replication fairly easy by using a mock TLS server in memory which self signs. When downloading from this, causes the same issue as stated.
 
 ---
 
