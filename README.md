@@ -102,30 +102,33 @@ func main() {
 
 ### Analysis
 
-[Your analysis of the root cause - what's causing the issue?]
+Root cause for the issue is the TLS getting messed up since the person's company's LAN is resigning the digital certificate so it shows as the TLS authentication getting intercepted.
 
 ### Proposed Solution
 
-[High-level description of your fix approach]
+Add a flag called either insecure or force that you can use for the cmd "minikube start" that ignores TLS and does a HTTP fallback if HTTPS doesn't work. 
 
 ### Implementation Plan
 
 Using UMPIRE framework (adapted):
 
-**Understand:** [Restate the problem]
+**Understand:** Some LANs can mess up the TLS, so want an option to ignore TLS and have an http fallback.
 
 **Match:** [What similar patterns/solutions exist in the codebase?]
+Similar HTTP fallback already exists in download.ISO() as an example for fallbacks. Implement something similar for download.Driver(), download.Binary(), download.Preload() as well.
 
 **Plan:** [Step-by-step implementation plan]
-1. [Modify file X to do Y]
-2. [Add function Z]
-3. [Update tests]
+1. Update docs for new flag. Add downloadFallback function and use that for ISO, Driver, Binary, and Preload so when insecure/force flag is set, it properly 
+2. Add downloadFallback function that checks for insecure flag
+3. Updated test in download_test.go that tests that HTTP fallback works on mock server and TLS error is ignored when flag is set.
 
-**Implement:** [Link to your branch/commits as you work]
+**Implement:** [[Link to your branch/commits as you work](https://github.com/kubernetes/minikube/compare/master...nathant27:minikube:feat/insecure-download-flag)]
 
 **Review:** [Self-review checklist - does it follow the project's contribution guidelines?]
+Seems to follow guidelines, but will do some more local testing before making the pull request first. And will double check all the code and logic as well.
 
 **Evaluate:** [How will you verify it works?]
+Run all the tests locally (unit tests, integration tests). Run testing script and make sure it works for other cases as well.
 
 ---
 
